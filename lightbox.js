@@ -1,22 +1,27 @@
 /**
- * @porperty {HTMLElement} element
+ * @property {HTMLElement} element
+ * @property {string[]} images Chemin des images de la lightbox
+ * @property {string} url Image actuellement affichée
  */
 class Ligthbox {
 
     static init (){
-        const links = document.querySelectorAll('a[href$=".png"], a[href$=".jpg"], a[href$=".jpeg"]')
-            .forEach(link => link.addEventListener('click', e => {
+        const links = Array.from(document.querySelectorAll('a[href$=".png"], a[href$=".jpg"], a[href$=".jpeg"]'))
+        const gallery = links.map(link => link.getAttribute('href'))
+        links.forEach(link => link.addEventListener('click', e => {
                 e.preventDefault();
-                new Ligthbox(e.currentTarget.getAttribute('href'));
+                new Ligthbox(e.currentTarget.getAttribute('href'), gallery);
             }))
     }
 
     /**
      * 
      * @param{string} url URL de l'image
+     * @param{string[]} images Chemin des images de la lightbox
      */
-    constructor(url){
+    constructor(url, images){
         this.element = this.buildDOM(url);
+        this.images = images;
         this.loadImage(url);
         this.onKeyUp = this.onKeyUp.bind(this);
         document.body.appendChild(this.element);
@@ -28,14 +33,17 @@ class Ligthbox {
      * @param{string} url URL de l'image
      */
     loadImage(url){
+        this.url = null;
         const image = new Image();
         const container = this.element.querySelector('.lightbox__container');
         const loader = document.createElement('div');
         loader.classList.add('lightbox__loader');
+        container.innerHTML = '';
         container.appendChild(loader);
-        image.onload = function () {
+        image.onload = () => {
             container.removeChild(loader);
             container.appendChild(image);
+            this.url = url;
         };
         image.src = url;
     }
@@ -47,12 +55,16 @@ class Ligthbox {
     onKeyUp(e){
         if(e.key === 'Escape'){
             this.close(e);
+        } else if (e.key === 'ArrowLeft') {
+            this.prev(e);
+        } else if (e.key === 'ArrowRight') {
+            this.next(e);
         }
     }
 
     /**
      * Close lightbox
-     * @param {MouseEvent} e 
+     * @param {MouseEvent/KeybordEvent} e 
      */
     close(e){
         e.preventDefault();
@@ -61,6 +73,30 @@ class Ligthbox {
             this.element.parentElement.removeChild(this.element)
         }, 500);
         document.removeEventListener('keyup', this.onKeyUp);
+    }
+
+    /**
+     * @param {MouseEvent/KeybordEvent} e 
+     */
+    next(e){
+        e.preventDefault();
+        let i = this.images.findIndex(image => image === this.url);
+        if(i === this.images.length - 1){
+            i = -1;
+        }
+        this.loadImage(this.images[i + 1]);
+    }
+
+    /**
+     * @param {MouseEvent/KeybordEvent} e 
+     */
+    prev(e){
+        e.preventDefault();
+        let i = this.images.findIndex(image => image === this.url);
+        if(i === 0){
+            i = this.images.length;
+        }
+        this.loadImage(this.images[i - 1]);
     }
 
     /**
@@ -75,7 +111,9 @@ class Ligthbox {
             <button class="lightbox__next">Suivant</button>
             <button class="lightbox__prev">Précédent</button>
             <div class="lightbox__container"></div>`;
-        dom.querySelector('.lightbox__close').addEventListener('click', this.close.bind(this))
+        dom.querySelector('.lightbox__close').addEventListener('click', this.close.bind(this));
+        dom.querySelector('.lightbox__next').addEventListener('click', this.next.bind(this));
+        dom.querySelector('.lightbox__prev').addEventListener('click', this.prev.bind(this));
         return dom;
     }
 }
