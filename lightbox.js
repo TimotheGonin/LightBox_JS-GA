@@ -88,6 +88,11 @@ class Ligthbox {
      */
     prev(e){
         e.preventDefault();
+        let i = this.images.findIndex(image => image === this.url);
+        if(i === 0){
+            i = this.images.length;
+        }
+        this.loadImage(this.images[i - 1]);
     }
 
     /**
