@@ -39,6 +39,18 @@ class Ligthbox {
     }
 
     /**
+     * Close lightbox
+     * @param {MouseEvent} e 
+     */
+    close(e){
+        e.preventDefault();
+        this.element.classList.add('fadeOut');
+        window.setTimeout(()=> {
+            this.element.parentElement.removeChild(this.element)
+        }, 500);
+    }
+
+    /**
      * 
      * @param{string} url URL de l'image
      * @return{HTMLElement}
@@ -47,9 +59,10 @@ class Ligthbox {
         const dom = document.createElement('div');
         dom.classList.add('lightbox');
         dom.innerHTML = `<button class="lightbox__close">Fermer</button>
-        <button class="lightbox__next">Suivant</button>
-        <button class="lightbox__prev">Précédent</button>
-        <div class="lightbox__container"></div>`;
+            <button class="lightbox__next">Suivant</button>
+            <button class="lightbox__prev">Précédent</button>
+            <div class="lightbox__container"></div>`;
+        dom.querySelector('.lightbox__close').addEventListener('click', this.close.bind(this))
         return dom;
     }
 }
