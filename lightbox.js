@@ -29,7 +29,7 @@ class Ligthbox {
         <button class="lightbox__next">Suivant</button>
         <button class="lightbox__prev">Précédent</button>
         <div class="lightbox__container">
-            <img src="${url}" alt="">
+            <div class="lightbox__loader">
         </div>`;
         return dom;
     }
