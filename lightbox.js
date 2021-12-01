@@ -1,3 +1,6 @@
+/**
+ * @porperty {HTMLElement} element
+ */
 class Ligthbox {
 
     static init (){
@@ -13,8 +16,26 @@ class Ligthbox {
      * @param{string} url URL de l'image
      */
     constructor(url){
-        const element = this.buildDOM(url);
-        document.body.appendChild(element);
+        this.element = this.buildDOM(url);
+        this.loadImage(url);
+        document.body.appendChild(this.element);
+    }
+
+    /**
+     * 
+     * @param{string} url URL de l'image
+     */
+    loadImage(url){
+        const image = new Image();
+        const container = this.element.querySelector('.lightbox__container');
+        const loader = document.createElement('div');
+        loader.classList.add('lightbox__loader');
+        container.appendChild(loader);
+        image.onload = function () {
+            container.removeChild(loader);
+            container.appendChild(image);
+        };
+        image.src = url;
     }
 
     /**
@@ -28,9 +49,7 @@ class Ligthbox {
         dom.innerHTML = `<button class="lightbox__close">Fermer</button>
         <button class="lightbox__next">Suivant</button>
         <button class="lightbox__prev">Précédent</button>
-        <div class="lightbox__container">
-            <div class="lightbox__loader">
-        </div>`;
+        <div class="lightbox__container"></div>`;
         return dom;
     }
 }
