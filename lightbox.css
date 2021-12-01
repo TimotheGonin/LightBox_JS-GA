@@ -8,6 +8,11 @@
     z-index:10;
     overflow:auto;
     animation: lightboxIn .5s;
+    transition: opacity .3s;
+}
+
+.lightbox.fadeOut{
+    opacity: 0;
 }
 
 .lightbox__next,
@@ -64,6 +69,12 @@
     margin-left: 50px;
     margin-right: 50px;
     min-height:100vh;
+}
+.lightbox__loader{
+    width:38px;
+    height:38px;
+    opacity:.5;
+    background: url(img/loader.svg) center center no-repeat;
 }
 
 /* ANIMATION */
